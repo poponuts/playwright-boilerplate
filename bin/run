@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set +e
+set -o noglob
+IFS=' '
+
+# shellcheck source=bin/utils.sh
+source "$(dirname "$0")/../bin/utils.sh"
+
+main() {
+  run_command "docker-compose up -d"
+
+  h1 "Services are starting up."
+  printf "\n%s\n" "Check the status by executing 'docker-compose top'"
+  success "Browse to http://localhost:80 and click any app to begin"
+}
+
+main "$@"

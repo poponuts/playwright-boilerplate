@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set +e
+set -o noglob
+IFS=' '
+
+# shellcheck source=bin/utils.sh
+source "$(dirname "$0")/../bin/utils.sh"
+
+check_docker_installed() {
+	if ! command -v docker > /dev/null; then
+		error_message_for_binary_missing "docker" "https://docs.docker.com/docker-for-mac/install/"
+		exit 1
+	fi
+}
+
+setup_frontend() {
+	run_command "docker-compose run --rm frontend yarn"
+}
+
+setup_backend() {
+	run_command "docker-compose run --rm backend rake db:setup"
+}
+
+main() {
+	check_docker_installed
+
+	setup_frontend
+	setup_backend
+}
+
+main "$@"

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set +e
+set -o noglob
+IFS=' '
+
+# shellcheck source=bin/utils.sh
+source "$(dirname "$0")/../bin/utils.sh"
+
+update_frontend() {
+	run_command "docker-compose run --rm frontend yarn"
+}
+
+update_backend() {
+  run_command "docker-compose build backend"
+	run_command "docker-compose run --rm backend bin/rake db:migrate"
+	run_command "docker-compose run --rm -e RAILS_ENV=test backend bin/rake db:migrate"
+}
+
+main() {
+	update_frontend
+	update_backend
+}
+
+main "$@"
